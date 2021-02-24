@@ -2,6 +2,7 @@
 using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
 using System;
+using Business.Abstract;
 
 namespace ConsoleUI
 {
@@ -25,7 +26,7 @@ namespace ConsoleUI
 
         private static void ProductTest()
         {
-            ProductManager productManager = new ProductManager(new EfProductDal());
+            ProductManager productManager = new ProductManager(new EfProductDal(), null);
 
             var result = productManager.GetAll();
             if (result.Success)
@@ -40,7 +41,7 @@ namespace ConsoleUI
                 Console.WriteLine(result.Message);
             }
 
-          
+
         }
     }
 }
