@@ -5,9 +5,10 @@ using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Business.BusinessAspects.Autofac;
+using Business.BusinessAspects.AutoFact;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -51,10 +52,11 @@ namespace Business.Concrete
         }
         [ValidationAspect(typeof(ProductValidator))]
         [SecuredOperation("product.add,admin")]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(CheckIfProductNameExist(product.ProductName),
-                  CheckIfProductCountOfCategoryCorrect(product.CategoryId),CheckIfCategoryLimitExcited());
+                  CheckIfProductCountOfCategoryCorrect(product.CategoryId), CheckIfCategoryLimitExcited());
             if (result != null)
             {
                 return result;
@@ -63,16 +65,23 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded);
         }
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Update(Product product)
         {
             throw new NotImplementedException();
         }
 
+        public IResult AddTransactionalTest(Product product)
+        {
+            throw new NotImplementedException();
+        }
+
+        [CacheAspect()]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
         }
-
+        [CacheAspect()]
         private IResult CheckIfProductCountOfCategoryCorrect(int categoryId)
         {
             var result = _productDal.GetAll(p => p.CategoryId == categoryId).Count;
@@ -95,7 +104,7 @@ namespace Business.Concrete
         private IResult CheckIfCategoryLimitExcited()
         {
             var result = _categoryService.GetAll();
-            if (result.Data.Count>15)
+            if (result.Data.Count > 15)
             {
                 return new ErrorResult(Messages.CategoryLimitExcited);
             }
