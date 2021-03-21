@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Core.Utilities.Security.Encryption;
 using Core.Utilities.Security.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Core.Extensions;
 using Core.IoC;
@@ -58,6 +57,8 @@ namespace WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseCors(builder => builder.WithOrigins("http://http://localhost:54399/").AllowAnyHeader().AllowAnyOrigin());
 
