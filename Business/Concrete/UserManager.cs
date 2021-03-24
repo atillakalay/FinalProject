@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Business.Abstract;
+using Business.BusinessAspects.AutoFact;
 using Core.Entities.Concrete;
 using DataAccess.Abstract;
 
@@ -20,6 +21,7 @@ namespace Business.Concrete
         {
             return _userDal.GetClaims(user);
         }
+
 
         public void Add(User user)
         {
